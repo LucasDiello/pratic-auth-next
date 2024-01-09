@@ -16,11 +16,11 @@ export const authOptions : NextAuthOptions = {
             name: "Credentials",
             credentials: {
                 email: { label: "Email", type: "email", placeholder: "jsmith"},
-                password: { label: "Password", type: "password" },
+                password: { label: "Password", type: "password", placeholder: "123456" },
                 name: { label: "Username", type: "text", placeholder: "john" }
             },
             async authorize(credentials) : Promise<any> {
-                console.log(credentials)
+                console.log("auth method",credentials)
                 const user = { email: 'teste@gmail.com', password: '123456', name: 'teste' }
                 return user
             }
