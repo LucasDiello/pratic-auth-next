@@ -3,14 +3,14 @@ import CredentialsProvider  from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
-
+import bcrypt from "bcryptjs";
 
 export const authOptions : NextAuthOptions = {
     adapter: PrismaAdapter(db as any),
     providers: [
         GithubProvider({
-            clientId: process.env.GITHUB_ID!, // o ! indica que o valor não é nulo
-            clientSecret: process.env.GITHUB_SECRET!
+            clientId: process.env.GITHUB_CLIENT_ID!, // o ! indica que o valor não é nulo
+            clientSecret: process.env.GITHUB_CLIENT_SECRET!
         }),
         CredentialsProvider({
             name: "Credentials",
@@ -21,7 +21,26 @@ export const authOptions : NextAuthOptions = {
             },
             async authorize(credentials) : Promise<any> {
                 console.log("auth method",credentials)
-                const user = { email: 'teste@gmail.com', password: '123456', name: 'teste' }
+                if(!credentials?.email || !credentials?.password) {
+                    throw new Error("Campos faltando!");
+                }
+
+                const user = await db.user.findUnique({
+                    where: {
+                        email: credentials.email
+                    }
+                })
+
+                if(!user || !user.hashedPassword) {
+                    throw new Error("Usuário não encontrado");
+                }
+
+                const matchPassword = await bcrypt.compare(credentials.password, user.hashedPassword);
+
+                if(!matchPassword) {
+                    throw new Error("Senha incorreta");
+                }
+
                 return user
             }
             })
@@ -31,5 +50,8 @@ export const authOptions : NextAuthOptions = {
     },
     secret: process.env.SECRET!,
     debug: process.env.NODE_ENV === "development",
+    pages: {
+        signIn: "/login",
+    }
 }
 

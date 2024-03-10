@@ -7,6 +7,9 @@ import { Label } from "@radix-ui/react-label";
 import { Button } from "./ui/button";
 import { Icons } from "./ui/icons";
 import { signIn } from "next-auth/react";
+import { toast } from "./ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
+import { useRouter } from "next/navigation";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -20,9 +23,10 @@ export function UserLoginForm({ className, ...props }: UserAuthFormProps) {
     
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState<IUser>({
-        email: "",
-        password: "",
+      email: "",
+      password: "",
     });
+    const router = useRouter()
 
     async function onSubmit(event: React.SyntheticEvent) {
       event.preventDefault();
@@ -32,6 +36,19 @@ export function UserLoginForm({ className, ...props }: UserAuthFormProps) {
         ...data,
         redirect: false,
       })
+
+      if(res?.error) {
+        toast({
+          title:"Ooops!",
+          description: res.error,
+          variant: "destructive",
+          action: (
+            <ToastAction altText="Tente Novamente">Tente Novamente</ToastAction>  
+          ),
+        })
+      } else {
+        router.push("/")
+      }
 
       setData({
         email: "",
@@ -88,6 +105,30 @@ export function UserLoginForm({ className, ...props }: UserAuthFormProps) {
         </Button>
             </div>
       </form>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Ou continue com
+          </span>
+        </div>
+      </div>
+      <Button
+        onClick={() => signIn("github", { callbackUrl: "/" })}
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Icons.gitHub className="mr-2 h-4 w-4" />
+        )}{" "}
+        Github
+      </Button>
     </div>
+    
   );
 }
