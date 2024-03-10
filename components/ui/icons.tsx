@@ -24,13 +24,11 @@ import {
     Twitter,
     User,
     X,
-    type Icon as LucideIcon,
   } from "lucide-react";
   
-    export type Icon = LucideIcon;
   
   export const Icons = {
-    logo: (props: LucideProps) => (
+    logo: (props: any) => (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" {...props}>
         <rect width="256" height="256" fill="none" />
         <line

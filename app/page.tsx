@@ -59,7 +59,7 @@ export default async function Home() {
           </h2>
           <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
             Este projeto traz várias bibliotecas em um aplicativo moderno, com
-            recursos atualizados do Next.js 13 e utilizando a melhor "não"
+            recursos atualizados do Next.js 13 e utilizando a melhor &rsquo;não&rsquo;
             biblioteca do momento shadcn/ui.
           </p>
         </div>
