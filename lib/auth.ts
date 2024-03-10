@@ -6,7 +6,7 @@ import { db } from "./db";
 import bcrypt from "bcryptjs";
 
 export const authOptions : NextAuthOptions = {
-    adapter: PrismaAdapter(db as any),
+    adapter: PrismaAdapter(db) as any, // o as any é para forçar o tipo (não é recomendado, mas é o que está na library)
     providers: [
         GithubProvider({
             clientId: process.env.GITHUB_CLIENT_ID!, // o ! indica que o valor não é nulo
